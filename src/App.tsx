@@ -1,19 +1,38 @@
+// App.tsx
+
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
 
 import "./App.css";
-function App() {
+import Load from "./pages/Load";
+
+const App: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  console.log(isAuthenticated);
+
   return (
-    <BrowserRouter>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="App">
+          <Routes>
+            <Route
+              path="/"
+              element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
+            />
+            <Route path="/load" element={<Load />} />
+            <Route path="/login" element={<Login />} />
+
+            <Route path="/*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
-}
+};
 
 export default App;
