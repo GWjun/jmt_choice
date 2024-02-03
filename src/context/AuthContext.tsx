@@ -13,24 +13,25 @@ const localAuth = JSON.parse(
   localStorage.getItem(process.env.REACT_APP_NAME as string) || "{}"
 );
 const isLocal = Object.keys(localAuth).length > 0 ? true : false;
+const isName = isLocal ? localAuth.user.user_metadata.full_name : "";
 
 interface AuthContextProps {
-  isAuthenticated: boolean;
-  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  auth: [boolean, string];
+  setAuth: Dispatch<SetStateAction<[boolean, string]>>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
-  isAuthenticated: isLocal,
-  setIsAuthenticated: () => {},
+  auth: [isLocal, isName],
+  setAuth: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(isLocal);
+  const [auth, setAuth] = useState<[boolean, string]>([isLocal, isName]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ auth, setAuth }}>
       {children}
     </AuthContext.Provider>
   );

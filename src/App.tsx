@@ -12,8 +12,7 @@ import "./App.css";
 import Load from "./pages/Load";
 
 const App: React.FC = () => {
-  const { isAuthenticated } = useAuth();
-  console.log(isAuthenticated);
+  const { auth } = useAuth();
 
   return (
     <AuthProvider>
@@ -22,7 +21,7 @@ const App: React.FC = () => {
           <Routes>
             <Route
               path="/"
-              element={isAuthenticated ? <Home /> : <Navigate to="/login" />}
+              element={auth[0] ? <Home /> : <Navigate to="/login" />}
             />
             <Route path="/load" element={<Load />} />
             <Route path="/login" element={<Login />} />
