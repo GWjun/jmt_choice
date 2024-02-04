@@ -122,27 +122,10 @@ body {
   align-items: center;
 }
 .Page > header {
-  background-color: #72b8f1;
-  color: #1d1b1b;
   display: flex;
   width: 100%;
 }
-.Page > header h1 {
-  font-size: 1.1rem;
-  text-align: center;
-  margin: auto;
-}
-.Page > header a {
-  align-self: center;
-  flex: 0 0 44px;
-  padding-left: 16px;
-  text-decoration: none;
-}
-.Page > header a:before {
-  color: #000;
-  content: "<";
-  font-weight: 700;
-}
+
 .Page > main {
   flex-grow: 1;
   margin: 8px 0;
@@ -151,22 +134,6 @@ body {
   bottom: 0;
   position: fixed;
   width: 100%;
-}
-.Page .userName {
-  color: #162a65;
-  font-size: 14px;
-  font-weight: bold;
-}
-.Page .LogoutButton {
-  width: 44.49px;
-  height: 44.49px;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-.Page .LogoutButton img {
-  width: 80%;
-  height: 60%;
 }
 
 /* Home.tsx */

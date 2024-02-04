@@ -1,3 +1,3 @@
 ## 존맛탱!
 
-jmt-choice.vercel.app
+https://jmt-choice.vercel.app/

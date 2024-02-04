@@ -15,7 +15,8 @@ export async function googleLogin() {
         access_type: "offline",
         prompt: "consent",
       },
-      redirectTo: "http://localhost:3000/load",
+      // redirectTo: "http://localhost:3000/load",
+      redirectTo: "https://jmt-choice.vercel.app/load",
     },
   });
 }
