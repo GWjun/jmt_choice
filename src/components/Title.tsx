@@ -1,3 +1,5 @@
+// Title.tsx
+
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -10,17 +12,20 @@ import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import Button from "@mui/material/Button";
+import SendIcon from "@mui/icons-material/Send";
 
 import { googleLogout } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
 import { theme } from "../utils/Theme";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 
 export default function PrimarySearchAppBar() {
   const { auth } = useAuth();
   const { address } = useAppContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
 
   const isMenuOpen = Boolean(anchorEl);
 
@@ -37,7 +42,7 @@ export default function PrimarySearchAppBar() {
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: "top",
+        vertical: 50,
         horizontal: "right",
       }}
       id={menuId}
@@ -50,13 +55,21 @@ export default function PrimarySearchAppBar() {
       onClose={handleMenuClose}
     >
       <MenuItem
-        sx={{ color: "black", fontSize: "13px" }}
+        sx={{
+          color: "black",
+          fontSize: "13px",
+          justifyContent: "center",
+        }}
         onClick={handleMenuClose}
       >
         {auth[1]}
       </MenuItem>
       <MenuItem
-        sx={{ color: "black", fontSize: "13px" }}
+        sx={{
+          color: "black",
+          fontSize: "13px",
+          justifyContent: "center",
+        }}
         onClick={googleLogout}
       >
         로그아웃
@@ -71,6 +84,7 @@ export default function PrimarySearchAppBar() {
           sx={{
             minHeight: "32px !important",
             color: theme.palette.text.primary,
+            justifyContent: "space-between",
           }}
         >
           <IconButton
@@ -94,14 +108,24 @@ export default function PrimarySearchAppBar() {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              position: "absolute",
+              top: "23px",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
             }}
           >
-            <Link
-              to="/adress"
-              style={{ textDecoration: "none", color: "inherit" }}
+            <Button
+              sx={{
+                color: "inherit",
+                backgroundColor: theme.palette.secondary.main,
+                borderRadius: "15px",
+              }}
+              variant="contained"
+              endIcon={<SendIcon />}
+              onClick={() => navigate("/address")}
             >
               {address.simple.replace(/"/g, "")}
-            </Link>
+            </Button>
           </Box>
           <Box>
             <IconButton

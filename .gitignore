@@ -23,4 +23,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-src/utils/supabaseClient.ts
+/src/utils/supabaseClient.ts
+/public/images

@@ -1,16 +1,24 @@
 // Home.tsx
 
-import React, { useEffect } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
+import { useAppContext } from "../../context/AppContext";
 
 import Page from "../../components/Page";
 import PrimarySearchAppBar from "../../components/Title";
 import SimpleBottomNavigation from "../../components/Footer";
-import { useAppContext } from "../../context/AppContext";
+import BoxMenu from "../../components/BoxMenu";
+
+import Grid from "@mui/material/Unstable_Grid2";
 
 const { kakao } = window;
 
 const Home: React.FC = () => {
   const { setAddress } = useAppContext();
+  const [selectedItem, setSelectedItem] = useState<number>(1);
+
+  const handleItemChange = (newValue: number) => {
+    setSelectedItem(newValue);
+  };
 
   const getLocation = () => {
     if (navigator.geolocation) {
@@ -59,6 +67,50 @@ const Home: React.FC = () => {
     }
   };
 
+  const renderMainContent = (): ReactNode => {
+    switch (selectedItem) {
+      case 0:
+        return <div>최근목록 내용</div>;
+      case 1:
+        return (
+          <Grid
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              justifyItems: "center",
+            }}
+            container
+          >
+            <BoxMenu
+              nav="/map"
+              width="40%"
+              height={200}
+              title="지도"
+              comment="지도에서 보기"
+            />
+            <BoxMenu
+              nav="/choice"
+              width="40%"
+              height={200}
+              title="추천"
+              comment="메뉴 추천 받기"
+            />
+            <BoxMenu
+              nav="/notfound"
+              width="calc(80% + 30px)"
+              height={120}
+              title="무야호"
+              comment="무야호"
+            />
+          </Grid>
+        );
+      case 2:
+        return <div>즐겨찾기 내용</div>;
+      default:
+        return <div></div>;
+    }
+  };
+
   useEffect(() => {
     const storedData = localStorage.getItem("myAddress");
     if (storedData) {
@@ -73,9 +125,14 @@ const Home: React.FC = () => {
     <div className="Home">
       <Page
         header={<PrimarySearchAppBar />}
-        footer={<SimpleBottomNavigation />}
+        footer={
+          <SimpleBottomNavigation
+            value={selectedItem}
+            onChange={handleItemChange}
+          />
+        }
       >
-        content
+        {renderMainContent()}
       </Page>
     </div>
   );

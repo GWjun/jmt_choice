@@ -1,3 +1,5 @@
+// Footer.tsx
+
 import * as React from "react";
 import Box from "@mui/material/Box";
 import BottomNavigation from "@mui/material/BottomNavigation";
@@ -7,16 +9,19 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import HomeIcon from "@mui/icons-material/Home";
 import RestoreIcon from "@mui/icons-material/Restore";
 
-export default function SimpleBottomNavigation() {
-  const [value, setValue] = React.useState(0);
+interface Props {
+  value: number;
+  onChange: (newValue: number) => void;
+}
 
+const SimpleBottomNavigation: React.FC<Props> = ({ value, onChange }) => {
   return (
     <Box>
       <BottomNavigation
         showLabels
         value={value}
         onChange={(event, newValue) => {
-          setValue(newValue);
+          onChange(newValue);
         }}
       >
         <BottomNavigationAction label="최근목록" icon={<RestoreIcon />} />
@@ -25,4 +30,6 @@ export default function SimpleBottomNavigation() {
       </BottomNavigation>
     </Box>
   );
-}
+};
+
+export default SimpleBottomNavigation;

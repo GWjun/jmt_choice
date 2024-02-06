@@ -12,6 +12,8 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Load from "./pages/Load";
 import Address from "./pages/Address";
+import Choice from "./pages/Choice";
+import Map from "./pages/Map";
 
 const App: React.FC = () => {
   const { auth } = useAuth();
@@ -28,7 +30,9 @@ const App: React.FC = () => {
               />
               <Route path="/load" element={<Load />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/adress" element={<Address />} />
+              <Route path="/address" element={<Address />} />
+              <Route path="/map" element={<Map />} />
+              <Route path="/choice" element={<Choice />} />
               <Route path="/*" element={<NotFound />} />
             </Routes>
           </div>

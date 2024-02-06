@@ -69,7 +69,7 @@ const Address: React.FC = () => {
 
   return (
     <div>
-      <div id="map" style={{ width: "500px", height: "400px" }}></div>
+      <div id="map" style={{ width: "100%", height: "500px" }}></div>
       <button onClick={handleClick}>표시한 곳으로 설정</button>
     </div>
   );

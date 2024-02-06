@@ -116,8 +116,8 @@ body {
 /* Page.css */
 
 .Page {
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
   min-width: 320px;
   align-items: center;
 }
@@ -125,7 +125,6 @@ body {
   display: flex;
   width: 100%;
 }
-
 .Page > main {
   flex-grow: 1;
   margin: 8px 0;

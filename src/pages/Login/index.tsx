@@ -8,7 +8,7 @@ const Login: React.FC = () => {
     <div className="Login">
       <div className="LoginForm">
         <h1 className="LoginTitle">Enjoy JMT!</h1>
-        <p className="LoginSubtitle">메뉴를 추천해 드릴게요!</p>
+        <p className="LoginSubtitle">메뉴를 추천해 드려요!</p>
         <div className="LoginButton">
           <button className="GoogleButton" onClick={googleLogin}>
             <img
