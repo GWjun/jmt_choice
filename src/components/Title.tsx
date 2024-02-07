@@ -9,11 +9,12 @@ import Typography from "@mui/material/Typography";
 import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
+import FaceIcon from "@mui/icons-material/Face";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import { googleLogout } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
@@ -21,7 +22,7 @@ import { theme } from "../utils/Theme";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 
-export default function PrimarySearchAppBar() {
+export default function Title() {
   const { auth } = useAuth();
   const { address } = useAppContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -38,11 +39,12 @@ export default function PrimarySearchAppBar() {
   };
 
   const menuId = "primary-search-account-menu";
+  const width = auth[1].length > 4 ? "200px" : "120px";
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: 50,
+        vertical: 40,
         horizontal: "right",
       }}
       id={menuId}
@@ -53,26 +55,30 @@ export default function PrimarySearchAppBar() {
       }}
       open={isMenuOpen}
       onClose={handleMenuClose}
+      sx={{
+        "& .MuiPaper-root": {
+          width: width,
+          backgroundColor: "#f8f9fa",
+          color: "#212529",
+          borderRadius: "8px",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        },
+        "& .MuiMenuItem-root": {
+          fontSize: "14px",
+          padding: "12px",
+          justifyContent: "space-between",
+          transition: "background-color 0.3s ease",
+          "&:hover": {
+            backgroundColor: "#dee2e6",
+          },
+        },
+      }}
     >
-      <MenuItem
-        sx={{
-          color: "black",
-          fontSize: "13px",
-          justifyContent: "center",
-        }}
-        onClick={handleMenuClose}
-      >
-        {auth[1]}
+      <MenuItem onClick={handleMenuClose}>
+        <FaceIcon fontSize="small" /> {auth[1]}
       </MenuItem>
-      <MenuItem
-        sx={{
-          color: "black",
-          fontSize: "13px",
-          justifyContent: "center",
-        }}
-        onClick={googleLogout}
-      >
-        로그아웃
+      <MenuItem onClick={googleLogout}>
+        <LogoutIcon fontSize="small" /> 로그아웃
       </MenuItem>
     </Menu>
   );
@@ -87,21 +93,24 @@ export default function PrimarySearchAppBar() {
             justifyContent: "space-between",
           }}
         >
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Typography
             variant="h6"
             noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          ></Typography>
+            component="a"
+            onClick={() => navigate("/")}
+            sx={{
+              mr: 2,
+              cursor: "pointer",
+              display: "flex",
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".1rem",
+              color: "inherit",
+              textDecoration: "none",
+            }}
+          >
+            JMT
+          </Typography>
           <Box
             sx={{
               flexGrow: 1,
