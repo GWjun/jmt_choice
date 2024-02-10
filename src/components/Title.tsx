@@ -10,11 +10,13 @@ import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import FaceIcon from "@mui/icons-material/Face";
 import LogoutIcon from "@mui/icons-material/Logout";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 
 import { googleLogout } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
@@ -22,12 +24,15 @@ import { theme } from "../utils/Theme";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 
+import "../utils/font.css";
+
 export default function Title() {
   const { auth } = useAuth();
   const { address } = useAppContext();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [menuToggle, setMenuToggle] = React.useState<boolean>(false);
+  const [optionOpen, setOptionOpen] = React.useState<boolean>(false);
   const navigate = useNavigate();
-
   const isMenuOpen = Boolean(anchorEl);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -74,7 +79,7 @@ export default function Title() {
         },
       }}
     >
-      <MenuItem onClick={handleMenuClose}>
+      <MenuItem onClick={() => navigate("/profile")}>
         <FaceIcon fontSize="small" /> {auth[1]}
       </MenuItem>
       <MenuItem onClick={googleLogout}>
@@ -82,6 +87,8 @@ export default function Title() {
       </MenuItem>
     </Menu>
   );
+
+  const top100Films = ["맛사랑", "찌개사랑"];
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -97,13 +104,15 @@ export default function Title() {
             variant="h6"
             noWrap
             component="a"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              navigate("/");
+              setMenuToggle(false);
+            }}
             sx={{
               mr: 2,
               cursor: "pointer",
               display: "flex",
-              fontFamily: "monospace",
-              fontWeight: 700,
+              fontFamily: "'Jua', sans-serif",
               letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
@@ -123,27 +132,72 @@ export default function Title() {
               transform: "translate(-50%, -50%)",
             }}
           >
-            <Button
-              sx={{
-                color: "inherit",
-                backgroundColor: theme.palette.secondary.main,
-                borderRadius: "15px",
-              }}
-              variant="contained"
-              endIcon={<SendIcon />}
-              onClick={() => navigate("/address")}
-            >
-              {address.simple.replace(/"/g, "")}
-            </Button>
+            {menuToggle ? (
+              <Autocomplete
+                id="size-small-standard"
+                size="small"
+                options={top100Films}
+                getOptionLabel={(option) => String(option)}
+                autoHighlight
+                autoFocus
+                open={optionOpen}
+                onInputChange={(event, value, reason) => {
+                  setOptionOpen(reason === "input");
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    placeholder="검색어를 입력하세요"
+                    autoFocus
+                    onFocus={() => setOptionOpen(true)}
+                  />
+                )}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <span
+                      style={{
+                        color: "black",
+                        fontFamily: "'Jua', sans-serif",
+                      }}
+                    >
+                      {option}
+                    </span>
+                  </li>
+                )}
+                sx={{
+                  width: { xs: "180px", md: "250px", xl: "300px" },
+                  height: "25px",
+                  "& .MuiInputBase-input": {
+                    color: "#eeeeee",
+                    fontFamily: "'Jua', sans-serif",
+                  },
+                }}
+              />
+            ) : (
+              <Button
+                sx={{
+                  color: "inherit",
+                  backgroundColor: theme.palette.secondary.main,
+                  borderRadius: "15px",
+                }}
+                variant="contained"
+                endIcon={<SendIcon />}
+                onClick={() => navigate("/address")}
+              >
+                {address.simple.replace(/"/g, "")}
+              </Button>
+            )}
           </Box>
           <Box>
             <IconButton
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
+              onClick={() => setMenuToggle((prev) => !prev)}
             >
-              <Badge color="secondary" variant="dot" invisible={false}>
-                <NotificationsIcon />
+              <Badge color="secondary">
+                <SearchIcon />
               </Badge>
             </IconButton>
             <IconButton

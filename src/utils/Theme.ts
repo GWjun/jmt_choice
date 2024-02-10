@@ -1,4 +1,7 @@
+// Theme.ts
+
 import { createTheme } from "@mui/material/styles";
+import "./font.css";
 
 export const theme = createTheme({
   palette: {
@@ -12,4 +15,7 @@ export const theme = createTheme({
       primary: "#ffffff",
     },
   },
+  // typography: {
+  //   fontFamily: "'Dongle', sans-serif",
+  // },
 });
