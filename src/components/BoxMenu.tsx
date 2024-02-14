@@ -35,8 +35,8 @@ const BoxMenu: React.FC<BoxMenuProps> = ({
           height: {
             xs: height,
             md: height + 40,
-            lg: height + 80,
-            xl: height + 120,
+            lg: height + 60,
+            xl: height + 80,
           },
           padding: "20px",
           boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",

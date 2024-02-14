@@ -25,15 +25,23 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 
 import "../utils/font.css";
+import SearchList from "./SearchList";
 
 export default function Title() {
   const { auth } = useAuth();
   const { address } = useAppContext();
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const [menuToggle, setMenuToggle] = React.useState<boolean>(false);
   const [optionOpen, setOptionOpen] = React.useState<boolean>(false);
+  const [keyword, setKeyword] = React.useState<string>("");
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
+
+  React.useEffect(() => {
+    // <SearchList searchKeyword={keyword} />;
+  }, [keyword]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -113,7 +121,6 @@ export default function Title() {
               cursor: "pointer",
               display: "flex",
               fontFamily: "'Jua', sans-serif",
-              letterSpacing: ".1rem",
               color: "inherit",
               textDecoration: "none",
             }}
@@ -134,21 +141,37 @@ export default function Title() {
           >
             {menuToggle ? (
               <Autocomplete
+                sx={{
+                  width: { xs: "180px", md: "250px", xl: "300px" },
+                  height: "37px",
+                  "& .MuiInputBase-input": {
+                    color: "black",
+                    fontFamily: "'Jua', sans-serif",
+                  },
+                  "& .MuiInputBase-root": {
+                    backgroundColor: "white",
+                    borderRadius: "20px",
+                  },
+                }}
                 id="size-small-standard"
                 size="small"
                 options={top100Films}
                 getOptionLabel={(option) => String(option)}
-                autoHighlight
-                autoFocus
                 open={optionOpen}
                 onInputChange={(event, value, reason) => {
+                  setKeyword(value);
                   setOptionOpen(reason === "input");
+                  if (reason === "reset") console.log(keyword);
+                }}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    console.log(keyword);
+                  }
                 }}
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    variant="standard"
-                    placeholder="검색어를 입력하세요"
+                    placeholder="검색"
                     autoFocus
                     onFocus={() => setOptionOpen(true)}
                   />
@@ -165,14 +188,6 @@ export default function Title() {
                     </span>
                   </li>
                 )}
-                sx={{
-                  width: { xs: "180px", md: "250px", xl: "300px" },
-                  height: "25px",
-                  "& .MuiInputBase-input": {
-                    color: "#eeeeee",
-                    fontFamily: "'Jua', sans-serif",
-                  },
-                }}
               />
             ) : (
               <Button
