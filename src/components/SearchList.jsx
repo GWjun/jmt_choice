@@ -180,8 +180,11 @@ const SearchList = ({ searchKeyword }) => {
 
   // Remove all child nodes of an element
   const removeAllChildNods = (el) => {
-    while (el.hasChildNodes()) {
-      el.removeChild(el.lastChild);
+    console.log(el);
+    if (el) {
+      while (el.hasChildNodes()) {
+        el.removeChild(el.lastChild);
+      }
     }
   };
 
@@ -189,7 +192,6 @@ const SearchList = ({ searchKeyword }) => {
     <div className="map_wrap">
       <div id="menu_wrap" className="bg_white">
         <div className="option"></div>
-        <hr />
         <ul id="placesList"></ul>
         <div id="pagination"></div>
       </div>

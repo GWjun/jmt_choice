@@ -5,7 +5,7 @@ import { useAppContext } from "../../context/AppContext";
 
 import Page from "../../components/Page";
 import Title from "../../components/Title";
-import SimpleBottomNavigation from "../../components/Footer";
+import Footer from "../../components/Footer";
 import BoxMenu from "../../components/BoxMenu";
 
 import Grid from "@mui/material/Unstable_Grid2";
@@ -124,12 +124,7 @@ const Home: React.FC = () => {
     <div className="Home">
       <Page
         header={<Title />}
-        footer={
-          <SimpleBottomNavigation
-            value={selectedItem}
-            onChange={handleItemChange}
-          />
-        }
+        footer={<Footer value={selectedItem} onChange={handleItemChange} />}
       >
         {renderMainContent()}
       </Page>

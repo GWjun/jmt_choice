@@ -25,7 +25,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
 
 import "../utils/font.css";
-import SearchList from "./SearchList";
 
 export default function Title() {
   const { auth } = useAuth();
@@ -39,8 +38,18 @@ export default function Title() {
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
 
+  const isSubmit = React.useRef<boolean>(false);
+
+  const handleSubmit = () => {
+    if (keyword !== "") window.location.href = `/search/${keyword}`;
+  };
+
   React.useEffect(() => {
-    // <SearchList searchKeyword={keyword} />;
+    console.log(isSubmit.current, keyword);
+    if (isSubmit.current && keyword !== "") {
+      window.location.href = `/search/${keyword}`;
+      isSubmit.current = false;
+    }
   }, [keyword]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -159,14 +168,14 @@ export default function Title() {
                 getOptionLabel={(option) => String(option)}
                 open={optionOpen}
                 onInputChange={(event, value, reason) => {
-                  setKeyword(value);
                   setOptionOpen(reason === "input");
-                  if (reason === "reset") console.log(keyword);
+                  setKeyword(value);
+                  if (reason === "reset") {
+                    isSubmit.current = true;
+                  }
                 }}
                 onKeyPress={(event) => {
-                  if (event.key === "Enter") {
-                    console.log(keyword);
-                  }
+                  if (event.key === "Enter") handleSubmit();
                 }}
                 renderInput={(params) => (
                   <TextField

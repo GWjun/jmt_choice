@@ -14,7 +14,7 @@ interface Props {
   onChange: (newValue: number) => void;
 }
 
-const SimpleBottomNavigation: React.FC<Props> = ({ value, onChange }) => {
+const Footer: React.FC<Props> = ({ value, onChange }) => {
   return (
     <Box>
       <BottomNavigation
@@ -32,4 +32,4 @@ const SimpleBottomNavigation: React.FC<Props> = ({ value, onChange }) => {
   );
 };
 
-export default SimpleBottomNavigation;
+export default Footer;
