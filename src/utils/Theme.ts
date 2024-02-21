@@ -14,6 +14,9 @@ export const theme = createTheme({
     text: {
       primary: "#ffffff",
     },
+    info: {
+      main: "#ffffff",
+    },
   },
   // typography: {
   //   fontFamily: "'Dongle', sans-serif",

@@ -18,6 +18,7 @@ const Profile: React.FC = () => {
     <Page header={<Title />}>
       <div
         style={{
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

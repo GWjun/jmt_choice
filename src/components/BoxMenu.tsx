@@ -1,11 +1,13 @@
 // BoxMenu.tsx
 
 import * as React from "react";
-import Grid from "@mui/material/Grid";
 import { useNavigate } from "react-router-dom";
+import { theme } from "../utils/Theme";
+
+import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/IconButton";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { theme } from "../utils/Theme";
+import Choice from "./Choice";
 
 interface BoxMenuProps {
   nav: string;
@@ -22,12 +24,21 @@ const BoxMenu: React.FC<BoxMenuProps> = ({
   title,
   comment,
 }) => {
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const navigate = useNavigate();
+
+  const handleNav = () => {
+    if (nav === "/choice") {
+      setIsOpen(true);
+    } else navigate(nav);
+  };
+
+  React.useEffect(() => {}, [isOpen]);
 
   return (
     <>
       <Grid
-        onClick={() => navigate(nav)}
+        onClick={handleNav}
         sx={{
           backgroundColor: "#eeeeee",
           borderRadius: "10px",
@@ -62,6 +73,7 @@ const BoxMenu: React.FC<BoxMenuProps> = ({
           <ArrowForwardIcon />
         </IconButton>
       </Grid>
+      {isOpen ? <Choice setIsOpen={setIsOpen} /> : null}
     </>
   );
 };

@@ -126,7 +126,7 @@ const Home: React.FC = () => {
         header={<Title />}
         footer={<Footer value={selectedItem} onChange={handleItemChange} />}
       >
-        {renderMainContent()}
+        <div style={{ width: "100%" }}>{renderMainContent()}</div>
       </Page>
     </div>
   );

@@ -18,21 +18,25 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
-import { googleLogout } from "../utils/supabaseClient";
-import { useAuth } from "../context/AuthContext";
-import { theme } from "../utils/Theme";
 import { useNavigate } from "react-router-dom";
+import { googleLogout } from "../utils/supabaseClient";
+import { theme } from "../utils/Theme";
+import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
 
 import "../utils/font.css";
 
-export default function Title() {
+interface TitleProps {
+  initValue?: string;
+  initMenu?: boolean;
+}
+
+const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
   const { auth } = useAuth();
   const { address } = useAppContext();
 
-  const [menuToggle, setMenuToggle] = React.useState<boolean>(false);
-  const [optionOpen, setOptionOpen] = React.useState<boolean>(false);
-  const [keyword, setKeyword] = React.useState<string>("");
+  const [menuToggle, setMenuToggle] = React.useState<boolean>(initMenu);
+  const [keyword, setKeyword] = React.useState<string>("-");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const navigate = useNavigate();
@@ -45,7 +49,6 @@ export default function Title() {
   };
 
   React.useEffect(() => {
-    console.log(isSubmit.current, keyword);
     if (isSubmit.current && keyword !== "") {
       window.location.href = `/search/${keyword}`;
       isSubmit.current = false;
@@ -105,7 +108,14 @@ export default function Title() {
     </Menu>
   );
 
-  const top100Films = ["맛사랑", "찌개사랑"];
+  const foodStores = [
+    "버거킹",
+    "KFC",
+    "롯데리아",
+    "노브랜드",
+    "맛사랑",
+    "찌개사랑",
+  ];
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -164,13 +174,12 @@ export default function Title() {
                 }}
                 id="size-small-standard"
                 size="small"
-                options={top100Films}
+                value={keyword === "-" ? initValue : keyword}
+                options={foodStores}
                 getOptionLabel={(option) => String(option)}
-                open={optionOpen}
                 onInputChange={(event, value, reason) => {
-                  setOptionOpen(reason === "input");
                   setKeyword(value);
-                  if (reason === "reset") {
+                  if (reason === "reset" && value !== initValue) {
                     isSubmit.current = true;
                   }
                 }}
@@ -178,12 +187,7 @@ export default function Title() {
                   if (event.key === "Enter") handleSubmit();
                 }}
                 renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    placeholder="검색"
-                    autoFocus
-                    onFocus={() => setOptionOpen(true)}
-                  />
+                  <TextField {...params} placeholder="검색" autoFocus />
                 )}
                 renderOption={(props, option) => (
                   <li {...props}>
@@ -197,16 +201,17 @@ export default function Title() {
                     </span>
                   </li>
                 )}
+                isOptionEqualToValue={() => false}
               />
             ) : (
               <Button
+                color="inherit"
                 sx={{
-                  color: "inherit",
                   backgroundColor: theme.palette.secondary.main,
                   borderRadius: "15px",
                 }}
                 variant="contained"
-                endIcon={<SendIcon />}
+                endIcon={<SendIcon color="info" />}
                 onClick={() => navigate("/address")}
               >
                 {address.simple.replace(/"/g, "")}
@@ -220,9 +225,7 @@ export default function Title() {
               color="inherit"
               onClick={() => setMenuToggle((prev) => !prev)}
             >
-              <Badge color="secondary">
-                <SearchIcon />
-              </Badge>
+              <SearchIcon />
             </IconButton>
             <IconButton
               size="large"
@@ -241,4 +244,6 @@ export default function Title() {
       {renderMenu}
     </Box>
   );
-}
+};
+
+export default Title;

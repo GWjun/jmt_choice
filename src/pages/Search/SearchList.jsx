@@ -1,42 +1,50 @@
 import React, { useState, useEffect } from "react";
+import { useAppContext } from "../../context/AppContext";
 
 const { kakao } = window;
 
 const SearchList = ({ searchKeyword }) => {
+  const { address } = useAppContext();
   const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState(null);
   const [infowindow, setInfowindow] = useState(null);
 
   useEffect(() => {
-    // Initialize infowindow
     const newInfowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
     setInfowindow(newInfowindow);
 
-    // Initial places search
     searchPlaces();
 
-    // Cleanup on unmount
     return () => {
-      removeAllChildNods(document.getElementById("placesList"));
+      removeAllChildNodes(document.getElementById("placesList"));
       removeMarker();
     };
   }, []);
 
-  // Search for places
   const searchPlaces = () => {
     const keyword = searchKeyword;
+    const center = new kakao.maps.LatLng(address.coord[0], address.coord[1]);
+    const radius = 2000;
 
     const ps = new kakao.maps.services.Places();
-    ps.keywordSearch(keyword, placesSearchCB);
+    const options = {
+      location: center,
+      radius: radius,
+    };
+
+    ps.keywordSearch(keyword, placesSearchCB, options);
   };
 
-  // Callback for places search
   const placesSearchCB = (data, status, pagination) => {
     if (status === kakao.maps.services.Status.OK) {
       displayPlaces(data);
       displayPagination(pagination);
     } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-      alert("검색 결과가 존재하지 않습니다.");
+      // 검색 결과가 없을 때 메시지를 표시합니다.
+      const listEl = document.getElementById("placesList");
+      removeAllChildNodes(listEl);
+      listEl.innerHTML =
+        '<li class="no-results">검색 결과가 존재하지 않습니다.</li>';
       return;
     } else if (status === kakao.maps.services.Status.ERROR) {
       alert("검색 결과 중 오류가 발생했습니다.");
@@ -44,12 +52,11 @@ const SearchList = ({ searchKeyword }) => {
     }
   };
 
-  // displayPlaces 함수 수정
   const displayPlaces = (places) => {
     const listEl = document.getElementById("placesList");
     const bounds = new kakao.maps.LatLngBounds();
 
-    removeAllChildNods(listEl);
+    removeAllChildNodes(listEl);
     removeMarker();
 
     places.forEach((place, index) => {
@@ -59,32 +66,32 @@ const SearchList = ({ searchKeyword }) => {
 
       bounds.extend(placePosition);
 
-      kakao.maps.event.addListener(marker, "mouseover", () => {
-        displayInfowindow(marker, place.place_name);
-      });
-
-      kakao.maps.event.addListener(marker, "mouseout", () => {
-        infowindow.close();
-      });
-
-      itemEl.onmouseover = () => {
-        displayInfowindow(marker, place.place_name);
-      };
-
-      itemEl.onmouseout = () => {
-        infowindow.close();
-      };
+      attachMarkerEvents(marker, itemEl);
 
       listEl.appendChild(itemEl);
     });
 
-    // map이 null이 아닌 경우에만 setBounds 호출
     if (map) {
       map.setBounds(bounds);
     }
   };
 
-  // Add a marker to the map
+  const attachMarkerEvents = (marker, itemEl) => {
+    const displayInfowindowHandler = () => {
+      displayInfowindow(marker, itemEl.innerText);
+    };
+
+    kakao.maps.event.addListener(marker, "mouseover", displayInfowindowHandler);
+    itemEl.addEventListener("mouseover", displayInfowindowHandler);
+
+    const closeInfowindowHandler = () => {
+      if (infowindow) infowindow.close();
+    };
+
+    kakao.maps.event.addListener(marker, "mouseout", closeInfowindowHandler);
+    itemEl.addEventListener("mouseout", closeInfowindowHandler);
+  };
+
   const addMarker = (position, idx) => {
     const imageSrc =
       "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png";
@@ -110,7 +117,6 @@ const SearchList = ({ searchKeyword }) => {
     return marker;
   };
 
-  // Remove all markers from the map
   const removeMarker = () => {
     markers.forEach((marker) => {
       marker.setMap(null);
@@ -118,21 +124,17 @@ const SearchList = ({ searchKeyword }) => {
     setMarkers([]);
   };
 
-  // Display infowindow with the place name
   const displayInfowindow = (marker, title) => {
-    const content = `<div style="padding:5px;z-index:1;">${title}</div>`;
-    infowindow.setContent(content);
-    infowindow.open(map, marker);
+    if (infowindow) {
+      const content = `<div style="padding:5px;z-index:1;">${title}</div>`;
+      infowindow.setContent(content);
+      infowindow.open(map, marker);
+    }
   };
 
-  // Display pagination
   const displayPagination = (pagination) => {
     const paginationEl = document.getElementById("pagination");
-    const fragment = document.createDocumentFragment();
-
-    while (paginationEl.hasChildNodes()) {
-      paginationEl.removeChild(paginationEl.lastChild);
-    }
+    removeAllChildNodes(paginationEl);
 
     for (let i = 1; i <= pagination.last; i++) {
       const el = document.createElement("a");
@@ -142,19 +144,15 @@ const SearchList = ({ searchKeyword }) => {
       if (i === pagination.current) {
         el.className = "on";
       } else {
-        el.onclick = (() => {
-          return () => {
-            pagination.gotoPage(i);
-          };
-        })(i);
+        el.onclick = () => {
+          pagination.gotoPage(i);
+        };
       }
 
-      fragment.appendChild(el);
+      paginationEl.appendChild(el);
     }
-    paginationEl.appendChild(fragment);
   };
 
-  // Get list item for a place
   const getListItem = (index, place) => {
     const el = document.createElement("li");
     let itemStr =
@@ -178,13 +176,9 @@ const SearchList = ({ searchKeyword }) => {
     return el;
   };
 
-  // Remove all child nodes of an element
-  const removeAllChildNods = (el) => {
-    console.log(el);
-    if (el) {
-      while (el.hasChildNodes()) {
-        el.removeChild(el.lastChild);
-      }
+  const removeAllChildNodes = (el) => {
+    while (el && el.hasChildNodes()) {
+      el.removeChild(el.lastChild);
     }
   };
 

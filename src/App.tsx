@@ -12,7 +12,6 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Load from "./pages/Load";
 import Address from "./pages/Address";
-import Choice from "./pages/Choice";
 import Map from "./pages/Map";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
@@ -34,7 +33,6 @@ const App: React.FC = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/address" element={<Address />} />
               <Route path="/map" element={<Map />} />
-              <Route path="/choice" element={<Choice />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/search/:name" element={<Search />} />
               <Route path="/*" element={<NotFound />} />
