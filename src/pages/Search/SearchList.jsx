@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { useAppContext } from "../../context/AppContext";
+import { supabase } from "../../utils/supabaseClient";
 
 const { kakao } = window;
 
@@ -8,6 +11,7 @@ const SearchList = ({ searchKeyword }) => {
   const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState(null);
   const [infowindow, setInfowindow] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const newInfowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
@@ -40,7 +44,6 @@ const SearchList = ({ searchKeyword }) => {
       displayPlaces(data);
       displayPagination(pagination);
     } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-      // 검색 결과가 없을 때 메시지를 표시합니다.
       const listEl = document.getElementById("placesList");
       removeAllChildNodes(listEl);
       listEl.innerHTML =
@@ -66,7 +69,7 @@ const SearchList = ({ searchKeyword }) => {
 
       bounds.extend(placePosition);
 
-      attachMarkerEvents(marker, itemEl);
+      attachMarkerEvents(marker, itemEl, place);
 
       listEl.appendChild(itemEl);
     });
@@ -76,9 +79,20 @@ const SearchList = ({ searchKeyword }) => {
     }
   };
 
-  const attachMarkerEvents = (marker, itemEl) => {
+  const attachMarkerEvents = (marker, itemEl, place) => {
     const displayInfowindowHandler = () => {
       displayInfowindow(marker, itemEl.innerText);
+    };
+
+    const handleListItemClick = async () => {
+      const { data, error } = await supabase
+        .from("stores")
+        .select("*")
+        .eq("id", place.id);
+      if (data.length === 0) window.alert("데이터에 없는 음식점 입니다.");
+      else {
+        navigate(`/store/${place.id}`);
+      }
     };
 
     kakao.maps.event.addListener(marker, "mouseover", displayInfowindowHandler);
@@ -90,6 +104,8 @@ const SearchList = ({ searchKeyword }) => {
 
     kakao.maps.event.addListener(marker, "mouseout", closeInfowindowHandler);
     itemEl.addEventListener("mouseout", closeInfowindowHandler);
+
+    itemEl.addEventListener("click", handleListItemClick);
   };
 
   const addMarker = (position, idx) => {

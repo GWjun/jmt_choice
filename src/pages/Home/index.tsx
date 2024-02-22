@@ -37,14 +37,14 @@ const Home: React.FC = () => {
             <BoxMenu
               nav="/map"
               width="40%"
-              height={200}
+              height={160}
               title="지도"
               comment="지도에서 보기"
             />
             <BoxMenu
               nav="/choice"
               width="40%"
-              height={200}
+              height={160}
               title="추천"
               comment="메뉴 추천 받기"
             />

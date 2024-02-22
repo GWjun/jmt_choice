@@ -15,6 +15,7 @@ import Address from "./pages/Address";
 import Map from "./pages/Map";
 import Profile from "./pages/Profile";
 import Search from "./pages/Search";
+import Store from "./pages/Store";
 
 const App: React.FC = () => {
   const { auth } = useAuth();
@@ -35,6 +36,7 @@ const App: React.FC = () => {
               <Route path="/map" element={<Map />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/search/:name" element={<Search />} />
+              <Route path="/store/:id" element={<Store />} />
               <Route path="/*" element={<NotFound />} />
             </Routes>
           </div>

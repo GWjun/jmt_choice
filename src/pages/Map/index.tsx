@@ -4,6 +4,7 @@ import Page from "../../components/Page";
 import Title from "../../components/Title";
 
 import { useAppContext } from "../../context/AppContext";
+import { supabase } from "../../utils/supabaseClient";
 
 const { kakao } = window;
 
@@ -24,6 +25,21 @@ const Map: React.FC = () => {
     const ps = new kakao.maps.services.Places(map);
 
     const placesSearchCB = (data: any, status: any, pagination: any) => {
+      // data.forEach(async (it: Store) => {
+      //   const newData: Store = {
+      //     id: it.id,
+      //     place_name: it.place_name,
+      //     address_name: it.address_name,
+      //     x: it.x,
+      //     y: it.y,
+      //     category_name: it.category_name,
+      //     phone: it.phone,
+      //     place_url: it.place_url,
+      //   };
+      //   const { data, error } = await supabase.from(`stores`).upsert([newData]);
+      //   if (error) console.log(error);
+      // });
+
       if (status === kakao.maps.services.Status.OK) {
         for (let i = 0; i < data.length; i++) {
           displayMarker(data[i]);

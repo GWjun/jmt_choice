@@ -17,9 +17,10 @@ import FaceIcon from "@mui/icons-material/Face";
 import LogoutIcon from "@mui/icons-material/Logout";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import Fade from "@mui/material/Fade";
 
 import { useNavigate } from "react-router-dom";
-import { googleLogout } from "../utils/supabaseClient";
+import { googleLogout, supabase } from "../utils/supabaseClient";
 import { theme } from "../utils/Theme";
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
@@ -33,9 +34,10 @@ interface TitleProps {
 
 const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
   const { auth } = useAuth();
-  const { address } = useAppContext();
+  const { address, foodStores } = useAppContext();
 
   const [menuToggle, setMenuToggle] = React.useState<boolean>(initMenu);
+  const [localToggle, setLocalToggle] = React.useState<boolean>(initMenu);
   const [keyword, setKeyword] = React.useState<string>("-");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -61,6 +63,13 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleToggle = () => {
+    setLocalToggle((prev) => !prev);
+    setTimeout(() => {
+      setMenuToggle((prev) => !prev);
+    }, 150);
   };
 
   const menuId = "primary-search-account-menu";
@@ -108,15 +117,6 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
     </Menu>
   );
 
-  const foodStores = [
-    "버거킹",
-    "KFC",
-    "롯데리아",
-    "노브랜드",
-    "맛사랑",
-    "찌개사랑",
-  ];
-
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -159,63 +159,67 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
             }}
           >
             {menuToggle ? (
-              <Autocomplete
-                sx={{
-                  width: { xs: "180px", md: "250px", xl: "300px" },
-                  height: "37px",
-                  "& .MuiInputBase-input": {
-                    color: "black",
-                    fontFamily: "'Jua', sans-serif",
-                  },
-                  "& .MuiInputBase-root": {
-                    backgroundColor: "white",
-                    borderRadius: "20px",
-                  },
-                }}
-                id="size-small-standard"
-                size="small"
-                value={keyword === "-" ? initValue : keyword}
-                options={foodStores}
-                getOptionLabel={(option) => String(option)}
-                onInputChange={(event, value, reason) => {
-                  setKeyword(value);
-                  if (reason === "reset" && value !== initValue) {
-                    isSubmit.current = true;
-                  }
-                }}
-                onKeyPress={(event) => {
-                  if (event.key === "Enter") handleSubmit();
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} placeholder="검색" autoFocus />
-                )}
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    <span
-                      style={{
-                        color: "black",
-                        fontFamily: "'Jua', sans-serif",
-                      }}
-                    >
-                      {option}
-                    </span>
-                  </li>
-                )}
-                isOptionEqualToValue={() => false}
-              />
+              <Fade in={localToggle} timeout={150}>
+                <Autocomplete
+                  sx={{
+                    width: { xs: "180px", md: "250px", xl: "300px" },
+                    height: "37px",
+                    "& .MuiInputBase-input": {
+                      color: "black",
+                      fontFamily: "'Jua', sans-serif",
+                    },
+                    "& .MuiInputBase-root": {
+                      backgroundColor: "white",
+                      borderRadius: "20px",
+                    },
+                  }}
+                  id="size-small-standard"
+                  size="small"
+                  value={keyword === "-" ? initValue : keyword}
+                  options={foodStores}
+                  getOptionLabel={(option) => String(option)}
+                  onInputChange={(event, value, reason) => {
+                    setKeyword(value);
+                    if (reason === "reset" && value !== initValue) {
+                      isSubmit.current = true;
+                    }
+                  }}
+                  onKeyPress={(event) => {
+                    if (event.key === "Enter") handleSubmit();
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} placeholder="검색" autoFocus />
+                  )}
+                  renderOption={(props, option) => (
+                    <li {...props}>
+                      <span
+                        style={{
+                          color: "black",
+                          fontFamily: "'Jua', sans-serif",
+                        }}
+                      >
+                        {option}
+                      </span>
+                    </li>
+                  )}
+                  noOptionsText="데이터가 없습니다"
+                />
+              </Fade>
             ) : (
-              <Button
-                color="inherit"
-                sx={{
-                  backgroundColor: theme.palette.secondary.main,
-                  borderRadius: "15px",
-                }}
-                variant="contained"
-                endIcon={<SendIcon color="info" />}
-                onClick={() => navigate("/address")}
-              >
-                {address.simple.replace(/"/g, "")}
-              </Button>
+              <Fade in={!localToggle} timeout={150}>
+                <Button
+                  color="inherit"
+                  sx={{
+                    backgroundColor: theme.palette.secondary.main,
+                    borderRadius: "15px",
+                  }}
+                  variant="contained"
+                  endIcon={<SendIcon color="info" />}
+                  onClick={() => navigate("/address")}
+                >
+                  {address.simple.replace(/"/g, "")}
+                </Button>
+              </Fade>
             )}
           </Box>
           <Box>
@@ -223,7 +227,7 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
               size="large"
               aria-label="show 17 new notifications"
               color="inherit"
-              onClick={() => setMenuToggle((prev) => !prev)}
+              onClick={handleToggle}
             >
               <SearchIcon />
             </IconButton>
