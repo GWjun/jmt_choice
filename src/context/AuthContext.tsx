@@ -14,21 +14,26 @@ const localAuth = JSON.parse(
 );
 const isLocal = Object.keys(localAuth).length > 0 ? true : false;
 const isName = isLocal ? localAuth.user.user_metadata.full_name : "";
+const isEmail = isLocal ? localAuth.user.user_metadata.email : "";
 
 interface AuthContextProps {
-  auth: [boolean, string];
-  setAuth: Dispatch<SetStateAction<[boolean, string]>>;
+  auth: [boolean, string, string];
+  setAuth: Dispatch<SetStateAction<[boolean, string, string]>>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
-  auth: [isLocal, isName],
+  auth: [isLocal, isName, isEmail],
   setAuth: () => {},
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [auth, setAuth] = useState<[boolean, string]>([isLocal, isName]);
+  const [auth, setAuth] = useState<[boolean, string, string]>([
+    isLocal,
+    isName,
+    isEmail,
+  ]);
 
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>

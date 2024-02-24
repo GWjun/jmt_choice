@@ -1,10 +1,9 @@
 import React, { useEffect } from "react";
+import { useAppContext } from "../../context/AppContext";
+// import { supabase } from "../../utils/supabaseClient";
 
 import Page from "../../components/Page";
 import Title from "../../components/Title";
-
-import { useAppContext } from "../../context/AppContext";
-import { supabase } from "../../utils/supabaseClient";
 
 const { kakao } = window;
 
@@ -55,10 +54,13 @@ const Map: React.FC = () => {
 
       kakao.maps.event.addListener(marker, "click", () => {
         infowindow.setContent(
-          '<div style="padding:5px;font-size:12px;">' +
+          '<a href="/store/' +
+            place.id +
+            '" style="padding:5px; font-size:13px; text-decoration:none; color:#4285f4;">' +
             place.place_name +
-            "</div>"
+            "</a>"
         );
+
         infowindow.open(map, marker);
       });
     };

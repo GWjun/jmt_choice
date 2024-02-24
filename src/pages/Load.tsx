@@ -12,7 +12,11 @@ const Load: React.FC = () => {
         localStorage.getItem(process.env.REACT_APP_NAME as string) || "{}"
       );
       if (Object.keys(localAuth).length > 0) {
-        setAuth([true, localAuth.user.user_metadata.full_name]);
+        setAuth([
+          true,
+          localAuth.user.user_metadata.full_name,
+          localAuth.user.user_metadata.email,
+        ]);
       }
       window.location.href = "/";
     }, 1000);

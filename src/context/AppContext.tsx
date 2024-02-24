@@ -42,7 +42,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const { data, error } = await supabase
           .from("stores")
-          .select("place_name");
+          .select("place_name")
+          .order("place_name", { ascending: true });
         if (error) {
           console.error("Error fetching data:", error);
           return;
