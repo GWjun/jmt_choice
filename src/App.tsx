@@ -8,6 +8,8 @@ import { AppProvider } from "./context/AppContext";
 import "./App.css";
 
 import Home from "./pages/Home";
+import Recent from "./pages/Home/Recent";
+import Favorite from "./pages/Home/Favorite";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import Load from "./pages/Load";
@@ -30,6 +32,8 @@ const App: React.FC = () => {
                 path="/"
                 element={auth[0] ? <Home /> : <Navigate to="/login" />}
               />
+              <Route path="/recent" element={<Recent />} />
+              <Route path="/favorite" element={<Favorite />} />
               <Route path="/load" element={<Load />} />
               <Route path="/login" element={<Login />} />
               <Route path="/address" element={<Address />} />

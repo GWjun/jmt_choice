@@ -13,15 +13,39 @@ import Typography from "@mui/material/Typography";
 import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import CallOutlinedIcon from "@mui/icons-material/CallOutlined";
+import Rating from "@mui/material/Rating";
 
 const Store: React.FC = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { auth } = useAuth();
+  const navigate = useNavigate();
+
   const [store, setStore] = React.useState<Store>();
+  const [starred, setStarred] = React.useState<number>(0);
+
+  const toggleStarred = React.useCallback(async () => {
+    if (starred === 0) {
+      setStarred(1);
+      await supabase.from(`favorite`).insert([
+        {
+          favorite: id,
+          store_name: store?.place_name || "notthing",
+          name: auth[1],
+          email: auth[2],
+        },
+      ]);
+    } else {
+      setStarred(0);
+      await supabase
+        .from("favorite")
+        .delete()
+        .eq("email", auth[2])
+        .eq("favorite", id);
+    }
+  }, [starred, store]);
 
   React.useEffect(() => {
-    const fetchData = async () => {
+    const fetchStore = async () => {
       console.log(id);
       try {
         const { data: storeData, error: storeError } = await supabase
@@ -31,26 +55,6 @@ const Store: React.FC = () => {
 
         if (storeData?.length) {
           setStore(storeData[0]);
-          await supabase.from(`recent`).delete().eq("recent", id);
-          const { data: userData, error: userError } = await supabase
-            .from(`recent`)
-            .select("*")
-            .eq("email", auth[2]);
-
-          if (userData) {
-            if (userData?.length >= 5) {
-              const oldestRow = userData.reduce((oldest, row) =>
-                row.created_at < oldest.created_at ? row : oldest
-              );
-              await supabase
-                .from(`recent`)
-                .delete()
-                .eq("recent", oldestRow.recent);
-            }
-          }
-          await supabase
-            .from(`recent`)
-            .insert([{ name: auth[1], email: auth[2], recent: id }]);
         } else {
           alert("데이터에 없는 음식점 입니다.");
           navigate(-1);
@@ -59,8 +63,54 @@ const Store: React.FC = () => {
         console.error("Error in fetchData:", error);
       }
     };
-    fetchData();
+
+    fetchStore();
   }, [id, navigate, auth]);
+
+  React.useEffect(() => {
+    const fetchFavorite = async () => {
+      await supabase.from(`recent`).delete().eq("recent", id);
+      const { data: favoreiteData, error: favoriteError } = await supabase
+        .from(`favorite`)
+        .select("*")
+        .eq("email", auth[2])
+        .eq("favorite", id);
+
+      if (favoreiteData?.length) {
+        setStarred(1);
+      }
+    };
+
+    const fetchRecent = async () => {
+      await supabase.from(`recent`).delete().eq("recent", id);
+      const { data: recentData, error: recentError } = await supabase
+        .from(`recent`)
+        .select("*")
+        .eq("email", auth[2]);
+
+      if (recentData?.length) {
+        if (recentData?.length >= 5) {
+          const oldestRow = recentData.reduce((oldest, row) =>
+            row.created_at < oldest.created_at ? row : oldest
+          );
+          await supabase.from(`recent`).delete().eq("recent", oldestRow.recent);
+        }
+      }
+      await supabase.from(`recent`).insert([
+        {
+          name: auth[1],
+          email: auth[2],
+          recent: id,
+          store_name: store?.place_name || "notthing",
+        },
+      ]);
+    };
+
+    if (Object.keys(store || {}).length > 0) {
+      fetchRecent();
+      fetchFavorite();
+    }
+  }, [id, auth, store]);
 
   return (
     <Page header={<Title />}>
@@ -95,18 +145,35 @@ const Store: React.FC = () => {
               alignItems: "center",
             }}
           >
-            <Typography
-              id="transition-modal-title"
-              variant="h6"
-              component="h2"
-              className="userName"
-              sx={{
-                color: "#333",
-                fontFamily: "'Jua', sans-serif",
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              {store?.place_name}
-            </Typography>
+              <Typography
+                id="transition-modal-title"
+                variant="h6"
+                component="h2"
+                className="userName"
+                sx={{
+                  color: "#333",
+                  fontFamily: "'Jua', sans-serif",
+                }}
+              >
+                {store?.place_name}
+              </Typography>
+              <Rating
+                sx={{
+                  position: "relative",
+                  bottom: 1,
+                  left: 5,
+                }}
+                value={starred}
+                max={1}
+                onChange={toggleStarred}
+              />
+            </div>
             <Typography
               id="transition-modal-description"
               variant="body1"

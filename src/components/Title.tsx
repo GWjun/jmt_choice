@@ -6,7 +6,6 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
@@ -19,8 +18,9 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import Fade from "@mui/material/Fade";
 
+import { supabase } from "../utils/supabaseClient";
 import { useNavigate } from "react-router-dom";
-import { googleLogout, supabase } from "../utils/supabaseClient";
+import { googleLogout } from "../utils/supabaseClient";
 import { theme } from "../utils/Theme";
 import { useAuth } from "../context/AuthContext";
 import { useAppContext } from "../context/AppContext";
@@ -44,18 +44,23 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
 
-  const isSubmit = React.useRef<boolean>(false);
+  async function handleSubmit(value?: string) {
+    const searchKeyword = value || keyword;
+    const { data: prev, error } = await supabase
+      .from("keyword")
+      .select("count")
+      .eq("keyword", searchKeyword);
 
-  const handleSubmit = () => {
-    if (keyword !== "") window.location.href = `/search/${keyword}`;
-  };
-
-  React.useEffect(() => {
-    if (isSubmit.current && keyword !== "") {
-      window.location.href = `/search/${keyword}`;
-      isSubmit.current = false;
+    if (error) {
+      console.error("Error fetching data:", error);
+    } else {
+      const newCount = prev.length ? prev[0].count : 0;
+      await supabase
+        .from("keyword")
+        .upsert([{ keyword: searchKeyword, count: newCount + 1 }]);
     }
-  }, [keyword]);
+    if (searchKeyword !== "") window.location.href = `/search/${searchKeyword}`;
+  }
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -102,9 +107,6 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
           padding: "12px",
           justifyContent: "space-between",
           transition: "background-color 0.3s ease",
-          "&:hover": {
-            backgroundColor: "#dee2e6",
-          },
         },
       }}
     >
@@ -180,9 +182,8 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
                   getOptionLabel={(option) => String(option)}
                   onInputChange={(event, value, reason) => {
                     setKeyword(value);
-                    if (reason === "reset" && value !== initValue) {
-                      isSubmit.current = true;
-                    }
+                    if (reason === "reset" && value !== initValue)
+                      handleSubmit(value);
                   }}
                   onKeyPress={(event) => {
                     if (event.key === "Enter") handleSubmit();
@@ -212,6 +213,9 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
                   sx={{
                     backgroundColor: theme.palette.secondary.main,
                     borderRadius: "15px",
+                    "&:hover": {
+                      backgroundColor: "#3887BE",
+                    },
                   }}
                   variant="contained"
                   endIcon={<SendIcon color="info" />}
