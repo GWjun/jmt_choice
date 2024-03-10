@@ -1,6 +1,7 @@
 // Home.tsx
 
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
 import { supabase } from "../../utils/supabaseClient";
 
@@ -11,12 +12,14 @@ import BoxMenu from "../../components/BoxMenu";
 
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const { kakao } = window;
 
 const Home: React.FC = () => {
   const { setAddress } = useAppContext();
   const [keywords, setKeywords] = React.useState<string[]>([]);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -24,7 +27,7 @@ const Home: React.FC = () => {
         .from("keyword")
         .select("*")
         .order("count", { ascending: false })
-        .limit(10);
+        .limit(5);
 
       if ((keyword || []).length > 0) {
         const newKeywords = keyword?.map((item) => item.keyword) || [];
@@ -96,10 +99,10 @@ const Home: React.FC = () => {
       <div
         style={{
           width: "100%",
-          // display: "flex",
-          // flexDirection: "column",
-          // alignItems: "space-between",
-          // justifyContent: "space-between",
+          height: "calc(100% - 140px)",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
         }}
       >
         <Grid
@@ -136,66 +139,69 @@ const Home: React.FC = () => {
           style={{
             width: "100%",
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <Typography
-            id="transition-modal-title"
-            variant="h6"
-            component="h2"
-            className="userName"
-            sx={{
-              color: "#333",
-              fontFamily: "'Jua', sans-serif",
-              padding: "5px",
-              margin: "20px 0px 0px 0px",
+          <div
+            style={{
+              width: "85%",
+              maxWidth: "600px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "10px",
+              backgroundColor: "#AADDEB",
+              boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.2)",
+              padding: "10px",
             }}
           >
-            검색순위
-          </Typography>
-          {keywords?.map((item, _i) => (
-            <Grid
-              key={_i}
-              // onClick={() => navigate(`/store/${item.id}`)}
-              container
-              spacing={2}
-              sx={{
-                width: "90%",
-                maxWidth: "700px",
-                justifyContent: "space-between",
-                backgroundColor: "#eeeeee",
-                boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05)",
-                borderRadius: "20px",
-                margin: "5px",
+            <div
+              style={{
+                color: "#333",
+                fontSize: "18px",
+                fontFamily: "'Jua', sans-serif",
+                padding: "3px 5px 0px 5px",
+                borderRadius: "10px",
+                backgroundColor: "#A8F3DB",
               }}
             >
-              <Grid
-                key={_i}
-                sx={{
-                  flex: "1 auto",
-                  padding: "8px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Typography
-                  id={`transition-modal-title-${_i}`}
-                  variant="h6"
-                  component="h2"
-                  className="userName"
+              검색순위
+            </div>
+            {keywords.length > 0 ? (
+              keywords.map((item, _i) => (
+                <Grid
+                  key={_i}
+                  onClick={() => navigate(`/search/${item}`)}
+                  container
+                  spacing={2}
                   sx={{
-                    color: "#333",
-                    fontFamily: "'Jua', sans-serif",
+                    width: "80%",
+                    maxWidth: "700px",
+                    backgroundColor: "#eeeeee",
+                    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05)",
+                    borderRadius: "20px",
+                    margin: "5px",
+                    padding: "6px",
+                    cursor: "pointer",
                   }}
                 >
-                  {_i + 1}. {item}
-                </Typography>
-              </Grid>
-            </Grid>
-          ))}
+                  <div
+                    style={{
+                      color: "#333",
+                      fontSize: "16px",
+                      fontFamily: "'Jua', sans-serif",
+                    }}
+                  >
+                    {_i + 1}. {item}
+                  </div>
+                </Grid>
+              ))
+            ) : (
+              <CircularProgress />
+            )}
+          </div>
         </div>
       </div>
     </Page>

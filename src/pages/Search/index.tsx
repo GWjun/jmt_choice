@@ -14,7 +14,16 @@ const Search: React.FC = () => {
 
   return (
     <Page header={<Title initValue={name} initMenu={true} />}>
-      <SearchList searchKeyword={name} />
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "start",
+          justifyContent: "center",
+        }}
+      >
+        <SearchList searchKeyword={name} />
+      </div>
     </Page>
   );
 };

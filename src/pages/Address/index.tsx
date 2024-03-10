@@ -100,7 +100,7 @@ const Address: React.FC = () => {
 
   return (
     <Page header={<Titile />} footer={buttons}>
-      <div id="map" style={{ width: "100%", height: "600px" }} />
+      <div id="map" style={{ width: "100%", height: "calc(100% - 106px)" }} />
     </Page>
   );
 };

@@ -55,6 +55,7 @@ const Title: React.FC<TitleProps> = ({ initValue, initMenu = false }) => {
       console.error("Error fetching data:", error);
     } else {
       const newCount = prev.length ? prev[0].count : 0;
+      console.log(newCount);
       await supabase
         .from("keyword")
         .upsert([{ keyword: searchKeyword, count: newCount + 1 }]);

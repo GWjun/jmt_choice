@@ -86,7 +86,7 @@ const Map: React.FC = () => {
 
   return (
     <Page header={<Title />}>
-      <div id="map" style={{ width: "100%", height: "1000px" }} />
+      <div id="map" style={{ width: "100%", height: "100%" }} />
     </Page>
   );
 };

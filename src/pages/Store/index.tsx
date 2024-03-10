@@ -119,8 +119,8 @@ const Store: React.FC = () => {
           width: "100%",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "start",
           alignItems: "center",
-          justifyContent: "center",
         }}
       >
         <Grid

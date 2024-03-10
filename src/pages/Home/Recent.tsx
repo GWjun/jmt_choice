@@ -12,6 +12,7 @@ import Title from "../../components/Title";
 import Grid from "@mui/material/Unstable_Grid2";
 import Typography from "@mui/material/Typography";
 import Footer from "../../components/Footer";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Recent = () => {
   const { auth } = useAuth();
@@ -71,59 +72,63 @@ const Recent = () => {
             justifyContent: "center",
           }}
         >
-          {recent?.map((item, _i) => (
-            <Grid
-              key={_i}
-              onClick={() => navigate(`/store/${item.id}`)}
-              container
-              spacing={2}
-              sx={{
-                width: "90%",
-                maxWidth: "700px",
-                justifyContent: "space-between",
-                backgroundColor: "#eeeeee",
-                boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05)",
-                borderRadius: "20px",
-                margin: "10px",
-              }}
-            >
+          {(recent || [])?.length > 0 ? (
+            recent?.map((item, _i) => (
               <Grid
                 key={_i}
+                onClick={() => navigate(`/store/${item.id}`)}
+                container
+                spacing={2}
                 sx={{
-                  flex: "1 auto",
-                  padding: "10px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
+                  width: "90%",
+                  maxWidth: "700px",
+                  justifyContent: "space-between",
+                  backgroundColor: "#eeeeee",
+                  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05)",
+                  borderRadius: "20px",
+                  margin: "10px",
                 }}
               >
-                <Typography
-                  id={`transition-modal-title-${_i}`}
-                  variant="h6"
-                  component="h2"
-                  className="userName"
+                <Grid
+                  key={_i}
                   sx={{
-                    color: "#333",
-                    fontFamily: "'Jua', sans-serif",
+                    flex: "1 auto",
+                    padding: "10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
                   }}
                 >
-                  {item?.place_name}
-                </Typography>
-                <Typography
-                  id={`transition-modal-description-${_i}`}
-                  variant="body1"
-                  sx={{
-                    color: "#555",
-                    padding: "5px",
-                    textAlign: "center",
-                    fontSize: "13px",
-                  }}
-                >
-                  {item?.category_name}
-                </Typography>
+                  <Typography
+                    id={`transition-modal-title-${_i}`}
+                    variant="h6"
+                    component="h2"
+                    className="userName"
+                    sx={{
+                      color: "#333",
+                      fontFamily: "'Jua', sans-serif",
+                    }}
+                  >
+                    {item?.place_name}
+                  </Typography>
+                  <Typography
+                    id={`transition-modal-description-${_i}`}
+                    variant="body1"
+                    sx={{
+                      color: "#555",
+                      padding: "5px",
+                      textAlign: "center",
+                      fontSize: "13px",
+                    }}
+                  >
+                    {item?.category_name}
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
-          ))}
+            ))
+          ) : (
+            <CircularProgress />
+          )}
         </div>
       </div>
     </Page>

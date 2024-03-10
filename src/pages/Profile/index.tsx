@@ -21,8 +21,8 @@ const Profile: React.FC = () => {
           width: "100%",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "start",
           alignItems: "center",
-          justifyContent: "center",
         }}
       >
         <Grid
@@ -31,7 +31,6 @@ const Profile: React.FC = () => {
           sx={{
             width: "90%",
             maxWidth: "700px",
-            justifyContent: "space-between",
             backgroundColor: "#eeeeee",
             boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05)",
             borderRadius: "20px",
@@ -40,9 +39,9 @@ const Profile: React.FC = () => {
         >
           <Grid
             sx={{
-              width: { xs: "150px", md: "200px", xl: "250px" },
-              height: { xs: "150px", md: "200px", xl: "250px" },
-              margin: "25px",
+              width: { xs: "120px", md: "200px", xl: "250px" },
+              height: { xs: "120px", md: "200px", xl: "250px" },
+              margin: "15px",
             }}
           >
             <Avatar

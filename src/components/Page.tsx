@@ -10,9 +10,9 @@ interface PageProps {
 
 const Page: React.FC<PageProps> = ({ header, children, footer }) => {
   return (
-    <div className="Page">
+    <div className="Page" style={{ width: "100%", height: "100vh" }}>
       <header>{header}</header>
-      <main>{children}</main>
+      <main style={{ height: "100%" }}>{children}</main>
       <footer>{footer}</footer>
     </div>
   );
